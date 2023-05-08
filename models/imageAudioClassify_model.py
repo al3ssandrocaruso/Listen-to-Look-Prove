@@ -15,6 +15,7 @@ from . import networks
 from torch.autograd import Variable
 
 class ImageAudioClassifyModel(torch.nn.Module):
+    # The model takes two inputs: images and audios and produces a single output which is a prediction.
     def name(self):
         return 'ImageAudioClassifyModel'
 

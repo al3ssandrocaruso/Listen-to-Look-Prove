@@ -15,6 +15,9 @@ from . import networks
 from torch.autograd import Variable
 
 class ImageAudioModel(torch.nn.Module):
+
+    # this code defines a simple model for jointly embedding image and audio features
+
     def name(self):
         return 'ImageAudioModel'
 

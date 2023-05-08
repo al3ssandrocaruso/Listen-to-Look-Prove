@@ -78,6 +78,7 @@ class AudioNet(nn.Module):
         return x
 
 class ClassifierNet(nn.Module):
+    # the network takes an input tensor x and passes it through a single fully connected (linear) layer called classifier.
     def __init__(self, input_dim, finetune_classes):
         super(ClassifierNet, self).__init__()
         self.classifier = torch.nn.Linear(input_dim, finetune_classes)

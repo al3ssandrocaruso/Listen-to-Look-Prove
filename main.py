@@ -60,11 +60,43 @@ def main(args):
 
     # Define the model
     builder = ModelBuilder()
+    '''
+    fully connected linear layer that takes an input tensor of size input_dim and passes it through this layer to produce an output tensor of size num_classes.
+    '''
     net_classifier = builder.build_classifierNet(512, args.num_classes).cuda()
+
+    '''
+    [Fusion Layer]
+
+    Neural network model that takes both image and audio features as input and returns an embedding of the concatenated features. During the forward pass of the 
+    ImageAudioModel, image and audio features are concatenated along the feature dimension using the torch.cat() function.
+    The concatenated features are passed through two fully connected layers imageAudio_fc1 and imageAudio_fc2 with ReLU activation in between.
+    The output tensor is the final embedding of the concatenated features.
+    
+    If weights is provided, the saved weights are loaded using a Checkpointer instance
+    
+    '''
     net_imageAudio = builder.build_imageAudioNet().cuda()
+
+    '''
+    building an instance of another neural network model called ImageAudioClassifyModel, which takes as input the outputs of net_imageAudio and net_classifier. 
+    The concatenated output of these models is then used to make a single prediction output. 
+    '''
     net_imageAudioClassify = builder.build_imageAudioClassifierNet(net_imageAudio, net_classifier, args, weights=args.weights_audioImageModel).cuda()
+
+
+    '''
+    Creates an instance of an LSTM-based model for audio preview using the function build_audioPreviewLSTM 
+    It takes three arguments: net_imageAudioFeature, net_classifier, and args. These are:
+        net_imageAudioFeature: A neural network that extracts image and audio features from input data. It could be a pre-trained model or one trained from scratch.
+        net_classifier: A classifier that takes the extracted features as input and produces a probability distribution over a set of classes. 
+                        This could also be a pre-trained model or one trained from scratch.
+        args: A set of arguments that specifies hyperparameters and other configurations for the model.
+    '''
     model = builder.build_audioPreviewLSTM(net_imageAudio, net_classifier, args)
     model = model.cuda()
+
+
     
     # DATA LOADING
     train_ds, train_collate = create_training_dataset(args,logger=logger)
